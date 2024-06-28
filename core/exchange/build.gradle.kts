@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.currencyconverter.core.currency"
+    namespace = "com.example.currencyconverter.core.exchange"
     compileSdk = 34
 
     defaultConfig {

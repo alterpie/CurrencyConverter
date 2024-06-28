@@ -1,10 +1,10 @@
-package com.example.currencyconverter.core.currency.di
+package com.example.currencyconverter.core.exchange.di
 
-import com.example.currencyconverter.core.currency.BuildConfig
-import com.example.currencyconverter.core.currency.remote.ExchangeRatesApi
-import com.example.currencyconverter.core.currency.remote.ExchangeRatesRemoteDataSource
-import com.example.currencyconverter.core.currency.remote.ExchangeRatesRemoteDataSourceImpl
-import com.example.currencyconverter.core.currency.repository.ExchangeRatesRepository
+import com.example.currencyconverter.core.exchange.BuildConfig
+import com.example.currencyconverter.core.exchange.rates.remote.ExchangeRatesApi
+import com.example.currencyconverter.core.exchange.rates.remote.ExchangeRatesRemoteDataSource
+import com.example.currencyconverter.core.exchange.rates.remote.ExchangeRatesRemoteDataSourceImpl
+import com.example.currencyconverter.core.exchange.rates.repository.ExchangeRatesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -20,7 +20,7 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-internal interface ExchangeRatesModule {
+internal interface RatesModule {
 
     @Binds
     fun exchangeRatesRepository(impl: ExchangeRatesRepository): ExchangeRatesRepository

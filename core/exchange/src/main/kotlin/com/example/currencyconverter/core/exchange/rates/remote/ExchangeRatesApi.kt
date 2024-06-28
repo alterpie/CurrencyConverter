@@ -1,6 +1,6 @@
-package com.example.currencyconverter.core.currency.remote
+package com.example.currencyconverter.core.exchange.rates.remote
 
-import com.example.currencyconverter.core.currency.remote.model.ExchangeRatesDto
+import com.example.currencyconverter.core.exchange.rates.remote.model.ExchangeRatesDto
 import retrofit2.http.GET
 
 internal interface ExchangeRatesApi {

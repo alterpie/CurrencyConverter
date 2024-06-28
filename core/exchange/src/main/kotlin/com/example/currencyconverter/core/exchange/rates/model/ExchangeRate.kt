@@ -1,4 +1,4 @@
-package com.example.currencyconverter.core.currency.model
+package com.example.currencyconverter.core.exchange.rates.model
 
 data class ExchangeRate(
     val name: Currency,

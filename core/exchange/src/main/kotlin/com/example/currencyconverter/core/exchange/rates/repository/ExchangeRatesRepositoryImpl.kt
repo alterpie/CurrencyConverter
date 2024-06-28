@@ -1,8 +1,8 @@
-package com.example.currencyconverter.core.currency.repository
+package com.example.currencyconverter.core.exchange.rates.repository
 
-import com.example.currencyconverter.core.currency.mappers.map
-import com.example.currencyconverter.core.currency.model.ExchangeRate
-import com.example.currencyconverter.core.currency.remote.ExchangeRatesRemoteDataSource
+import com.example.currencyconverter.core.exchange.rates.mappers.map
+import com.example.currencyconverter.core.exchange.rates.model.ExchangeRate
+import com.example.currencyconverter.core.exchange.rates.remote.ExchangeRatesRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

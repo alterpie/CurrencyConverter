@@ -4,7 +4,7 @@ import com.example.currencyconverter.core.balance.local.database.dao.CurrencyBal
 import com.example.currencyconverter.core.balance.local.database.model.CurrencyBalanceEntity
 import com.example.currencyconverter.core.balance.mappers.map
 import com.example.currencyconverter.core.balance.model.CurrencyBalance
-import com.example.currencyconverter.core.currency.model.Currency
+import com.example.currencyconverter.core.exchange.rates.model.Currency
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

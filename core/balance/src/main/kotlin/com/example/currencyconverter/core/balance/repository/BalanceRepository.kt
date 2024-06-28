@@ -1,7 +1,7 @@
 package com.example.currencyconverter.core.balance.repository
 
 import com.example.currencyconverter.core.balance.model.CurrencyBalance
-import com.example.currencyconverter.core.currency.model.Currency
+import com.example.currencyconverter.core.exchange.rates.model.Currency
 import kotlinx.coroutines.flow.Flow
 
 interface BalanceRepository {

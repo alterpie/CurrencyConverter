@@ -2,7 +2,7 @@ package com.example.currencyconverter.core.balance.local.database.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import com.example.currencyconverter.core.currency.model.Currency
+import com.example.currencyconverter.core.exchange.rates.model.Currency
 
 @Entity(tableName = "currency_balance")
 internal data class CurrencyBalanceEntity(

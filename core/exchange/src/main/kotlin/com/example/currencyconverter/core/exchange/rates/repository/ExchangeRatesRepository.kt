@@ -1,6 +1,6 @@
-package com.example.currencyconverter.core.currency.repository
+package com.example.currencyconverter.core.exchange.rates.repository
 
-import com.example.currencyconverter.core.currency.model.ExchangeRate
+import com.example.currencyconverter.core.exchange.rates.model.ExchangeRate
 import kotlinx.coroutines.flow.Flow
 
 interface ExchangeRatesRepository {

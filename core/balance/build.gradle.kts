@@ -35,8 +35,12 @@ android {
 dependencies {
     implementation(libs.hilt)
     implementation(libs.kotlinx.coroutines)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    implementation(projects.core.rates)
 
     ksp(libs.hilt.compiler)
+    ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
 }

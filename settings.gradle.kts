@@ -11,6 +11,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -19,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Currency converter"
-include(":app")
+rootProject.name = "Currency-converter"
+include(":app", ":core:rates")

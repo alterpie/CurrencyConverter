@@ -51,7 +51,7 @@ dependencies {
     implementation(libs.compose.activity)
     implementation(libs.androidx.core.ktx)
     implementation(libs.hilt)
-    implementation(projects.core.rates)
+    implementation(projects.core.exchange)
 
     ksp(libs.hilt.compiler)
 

@@ -37,7 +37,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    implementation(projects.core.rates)
+    implementation(projects.core.exchange)
 
     ksp(libs.hilt.compiler)
     ksp(libs.room.compiler)

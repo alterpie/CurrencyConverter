@@ -22,6 +22,7 @@ internal class ExchangeEngineImpl @Inject constructor(
                     newBaseBalance = exchangeTransaction.baseBalance - exchangeTransaction.amount,
                     convertedAmount = converted,
                     fee = feeAmount,
+                    feeCurrency = exchangeTransaction.base,
                 )
             )
         }

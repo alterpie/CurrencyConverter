@@ -97,8 +97,8 @@ internal class ExchangeViewModel @Inject constructor(
                         _state.update {
                             it.copy(
                                 exchangeStatus = ExchangeStatus.Success(
-                                    traded = result.baseCurrency to (result.oldBaseBalance - result.newBaseBalance),
-                                    bought = result.convertedCurrency to result.convertedAmount,
+                                    traded = base to (result.oldBaseBalance - result.newBaseBalance),
+                                    bought = targetCurrency to result.convertedAmount,
                                     fee = result.feeCurrency to result.fee,
                                 )
                             )

@@ -75,6 +75,10 @@ internal class ExchangeViewModel @Inject constructor(
         _state.update { it.copy(exchangeAmount = amountInput.toDouble()) }
     }
 
+    fun clearExchangeStatus() {
+        _state.update { it.copy(exchangeStatus = ExchangeStatus.Idle) }
+    }
+
     fun exchangeCurrency(amountInput: String) {
         val base = _state.value.selectedBalance?.currency ?: return
         val targetCurrency = _state.value.selectedRate?.currency ?: return
@@ -93,9 +97,9 @@ internal class ExchangeViewModel @Inject constructor(
                         _state.update {
                             it.copy(
                                 exchangeStatus = ExchangeStatus.Success(
-                                    currencyTraded = result.oldBaseBalance - result.newBaseBalance,
-                                    currencyBought = result.convertedAmount,
-                                    fee = result.fee,
+                                    traded = result.baseCurrency to (result.oldBaseBalance - result.newBaseBalance),
+                                    bought = result.convertedCurrency to result.convertedAmount,
+                                    fee = result.feeCurrency to result.fee,
                                 )
                             )
                         }

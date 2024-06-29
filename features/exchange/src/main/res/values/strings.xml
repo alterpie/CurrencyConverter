@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="exchange_successful_trade_title">Currency converted</string>
+<string name="exchange_successful_trade_message">You have converted %s %s to %s %s</string>
+<string name="exchange_successful_trade_message_with_fee">You have converted %s %s to %s %s. Commission fee %s %s</string>
+<string name="exchange_successful_trade_action">Done</string>
+<string name="exchange_conversion_error_title">Oops..</string>
+<string name="exchange_conversion_error_message">Commission exceeds balance</string>
+<string name="exchange_conversion_error_action">Ok</string>
+</resources>

@@ -7,7 +7,7 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
-compose-compiler = "1.5.7"
+compose-compiler = "1.5.14"
 hilt = "2.51.1"
 retrofit = "2.11.0"
 room = "2.6.1"
@@ -20,6 +20,8 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2024.06.00" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 compose-material = { group = "androidx.compose.material", name = "material" }
 compose-activity = { group = "androidx.activity", name = "activity-compose", version = "1.9.0" }
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }

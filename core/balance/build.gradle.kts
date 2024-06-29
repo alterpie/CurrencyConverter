@@ -32,6 +32,10 @@ android {
     }
 }
 
+ksp {
+    arg("room.generateKotlin", "true")
+}
+
 dependencies {
     implementation(libs.hilt)
     implementation(libs.kotlinx.coroutines)

@@ -1,12 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.example.currencyconverter.features.exchange"
+    namespace = "com.example.currencyconverter.core.design_system"
     compileSdk = 34
 
     defaultConfig {
@@ -43,16 +41,4 @@ android {
 dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material)
-    debugImplementation(libs.compose.ui.tooling)
-    implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.hilt)
-    implementation(projects.core.exchange)
-    implementation(projects.core.balance)
-    implementation(projects.core.designSystem)
-
-    ksp(libs.hilt.compiler)
-
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }

@@ -46,6 +46,8 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.hilt)
+    implementation(libs.lifecycle)
+    implementation(libs.kotlinx.immutableCollections)
     implementation(projects.core.exchange)
     implementation(projects.core.balance)
     implementation(projects.core.designSystem)

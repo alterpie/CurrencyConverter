@@ -11,6 +11,7 @@ compose-compiler = "1.5.14"
 hilt = "2.51.1"
 retrofit = "2.11.0"
 room = "2.6.1"
+lifecycle = "2.8.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +37,8 @@ kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutin
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+lifecycle = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+kotlinx-immutableCollections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version = "0.3.7" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

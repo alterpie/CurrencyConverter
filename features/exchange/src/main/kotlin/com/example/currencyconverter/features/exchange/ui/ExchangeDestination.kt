@@ -28,8 +28,6 @@ fun ExchangeDestination() {
     }
     val state by viewModel.state.collectAsState()
 
-    ExchangeScreen()
-
     val coroutineScope = rememberCoroutineScope()
 
     val selectRateSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -38,15 +36,45 @@ fun ExchangeDestination() {
         rates = state.rates,
         sheetState = selectRateSheetState,
         showBottomSheet = showSelectRateSheet,
-        onRateClick = {
+        onRateClick = { rate ->
             coroutineScope.launch {
                 selectRateSheetState.hide()
             }.invokeOnCompletion {
                 if (!selectRateSheetState.isVisible) {
+                    viewModel.onRateSelected(rate)
                     showSelectRateSheet = false
                 }
             }
         },
-        onDismiss = { showSelectRateSheet = false }
+        onDismiss = { showSelectRateSheet = false },
+    )
+
+    val selectBalanceSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showSelectBalanceSheet by remember { mutableStateOf(false) }
+    SelectBalanceContent(
+        balances = state.balances,
+        sheetState = selectBalanceSheetState,
+        showBottomSheet = showSelectBalanceSheet,
+        onBalanceClick = { balance ->
+            coroutineScope.launch {
+                selectBalanceSheetState.hide()
+            }.invokeOnCompletion {
+                if (!selectRateSheetState.isVisible) {
+                    viewModel.onBalanceSelected(balance)
+                    showSelectBalanceSheet = false
+                }
+            }
+        },
+        onDismiss = { showSelectBalanceSheet = false },
+    )
+
+    ExchangeScreen(
+        state = state,
+        onExchangeCurrencyClick = { amountInput ->
+            viewModel.exchangeCurrency(amountInput = amountInput)
+        },
+        onSelectBalanceClick = { showSelectBalanceSheet = true },
+        onSelectRateClick = { showSelectRateSheet = true },
+        onExchangeAmountChange = { viewModel.onExchangeAmountChange(it) },
     )
 }

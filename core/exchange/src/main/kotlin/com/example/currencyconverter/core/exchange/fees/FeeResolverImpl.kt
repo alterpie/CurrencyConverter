@@ -4,7 +4,7 @@ import com.example.currencyconverter.core.exchange.converter.model.ExchangeTrans
 import javax.inject.Inject
 
 internal class FeeResolverImpl @Inject constructor(
-    private val feeAppliers: Set<FeeApplier>,
+    private val feeAppliers: Set<@JvmSuppressWildcards FeeApplier>,
 ) : FeeResolver {
 
     override fun resolve(exchangeTransaction: ExchangeTransaction): Double {

@@ -5,6 +5,7 @@ import com.example.currencyconverter.core.exchange.rates.remote.ExchangeRatesApi
 import com.example.currencyconverter.core.exchange.rates.remote.ExchangeRatesRemoteDataSource
 import com.example.currencyconverter.core.exchange.rates.remote.ExchangeRatesRemoteDataSourceImpl
 import com.example.currencyconverter.core.exchange.rates.repository.ExchangeRatesRepository
+import com.example.currencyconverter.core.exchange.rates.repository.ExchangeRatesRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -23,7 +24,7 @@ import javax.inject.Singleton
 internal interface RatesModule {
 
     @Binds
-    fun exchangeRatesRepository(impl: ExchangeRatesRepository): ExchangeRatesRepository
+    fun exchangeRatesRepository(impl: ExchangeRatesRepositoryImpl): ExchangeRatesRepository
 
     @Binds
     fun exchangeRatesRemoteDataSource(impl: ExchangeRatesRemoteDataSourceImpl): ExchangeRatesRemoteDataSource

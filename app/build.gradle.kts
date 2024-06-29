@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.hilt)
     implementation(projects.features.exchange)
+    implementation(projects.core.designSystem)
 
     ksp(libs.hilt.compiler)
 

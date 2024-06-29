@@ -9,6 +9,7 @@ import com.example.currencyconverter.core.exchange.fees.FirstFiveTransactionsFre
 import com.example.currencyconverter.core.exchange.fees.TradedCurrencyFee
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
@@ -18,16 +19,23 @@ import dagger.multibindings.IntoSet
 internal interface ExchangeModule {
 
     @Binds
-    @IntoSet
-    fun firstFiveTransactionsFreeFeeApplier(impl: FirstFiveTransactionsFreeFeeApplier): FeeApplier
-
-    @Binds
-    @IntoSet
-    fun tradeCurrencyFee(impl: TradedCurrencyFee): FeeApplier
-
-    @Binds
     fun feeResolver(impl: FeeResolverImpl): FeeResolver
 
     @Binds
     fun exchangeEngine(impl: ExchangeEngineImpl): ExchangeEngine
+
+    companion object {
+
+        @Provides
+        @IntoSet
+        fun firstFiveTransactionsFreeFeeApplier(): FeeApplier {
+            return FirstFiveTransactionsFreeFeeApplier()
+        }
+
+        @Provides
+        @IntoSet
+        fun tradeCurrencyFee(): FeeApplier {
+            return TradedCurrencyFee()
+        }
+    }
 }

@@ -4,17 +4,23 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.currencyconverter.core.balance.model.CurrencyBalance
+import com.example.currencyconverter.core.balance.repository.BalanceRepository
 import com.example.currencyconverter.core.exchange.converter.error.ExchangeError
-import com.example.currencyconverter.core.exchange.rates.model.Currency
+import com.example.currencyconverter.core.exchange.rates.model.ExchangeRate
 import com.example.currencyconverter.core.exchange.rates.repository.ExchangeRatesRepository
 import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState.ExchangeStatus
+import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState.ScreenStatus
 import com.example.currencyconverter.features.exchange.presentation.usecase.ExchangeCurrencyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -23,9 +29,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class ExchangeViewModel @Inject constructor(
-    private val ioDispatcher: CoroutineDispatcher,
     private val exchangeCurrencyUseCase: ExchangeCurrencyUseCase,
     private val exchangeRatesRepository: ExchangeRatesRepository,
+    private val balanceRepository: BalanceRepository,
 ) : ViewModel(), DefaultLifecycleObserver {
 
     private val _state = MutableStateFlow(ExchangeUiState())
@@ -33,18 +39,53 @@ internal class ExchangeViewModel @Inject constructor(
 
     private val refreshJob: Job = Job()
 
-    fun clearData() {
-        // clear balances and counters
+    init {
+        getRates()
+        getBalances()
     }
 
-    fun exchangeCurrency(base: Currency, amount: Double, targetCurrency: Currency) {
+    private fun getRates() {
+        exchangeRatesRepository.getRates()
+            .onEach { rates ->
+                _state.update {
+                    it.copy(
+                        rates = rates.toImmutableList(),
+                        screenStatus = ScreenStatus.CONTENT,
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun getBalances() {
+        balanceRepository.getBalances()
+            .onEach { balances -> _state.update { it.copy(balances = balances.toImmutableList()) } }
+            .launchIn(viewModelScope)
+    }
+
+    fun onBalanceSelected(currencyBalance: CurrencyBalance) {
+        _state.update { it.copy(selectedBalance = currencyBalance) }
+    }
+
+    fun onRateSelected(exchangeRate: ExchangeRate) {
+        _state.update { it.copy(selectedRate = exchangeRate) }
+    }
+
+    fun onExchangeAmountChange(amountInput: String) {
+        _state.update { it.copy(exchangeAmount = amountInput.toDouble()) }
+    }
+
+    fun exchangeCurrency(amountInput: String) {
+        val base = _state.value.selectedBalance?.currency ?: return
+        val targetCurrency = _state.value.selectedRate?.currency ?: return
         viewModelScope.launch {
             _state.update { it.copy(exchangeStatus = ExchangeStatus.Loading) }
-            withContext(ioDispatcher) {
+            val amount = amountInput.toDouble()
+            withContext(Dispatchers.IO) {
                 exchangeCurrencyUseCase.execute(
                     base = base,
                     target = targetCurrency,
-                    amount = amount
+                    amount = amount,
                 )
             }
                 .fold(
@@ -77,17 +118,29 @@ internal class ExchangeViewModel @Inject constructor(
         viewModelScope.launch(refreshJob) {
             while (isActive) {
                 exchangeRatesRepository.refreshRates()
+                    .onFailure {
+                        if (_state.value.rates.isEmpty()) {
+                            _state.update { it.copy(screenStatus = ScreenStatus.FAILURE) }
+                        }
+                    }
                 delay(REFRESH_DELAY_MS)
             }
         }
     }
 
     override fun onStart(owner: LifecycleOwner) {
+        if (_state.value.rates.isEmpty()) {
+            _state.update { it.copy(screenStatus = ScreenStatus.LOADING) }
+        }
         refreshRates()
     }
 
     override fun onPause(owner: LifecycleOwner) {
         refreshJob.cancel()
+    }
+
+    fun clearData() {
+        // clear balances and counters
     }
 
     private companion object {

@@ -8,11 +8,14 @@ import kotlinx.collections.immutable.persistentListOf
 internal data class ExchangeUiState(
     val balances: ImmutableList<CurrencyBalance> = persistentListOf(),
     val rates: ImmutableList<ExchangeRate> = persistentListOf(),
-    val screenStatus: ScreenStatus = ScreenStatus.IDLE,
+    val screenStatus: ScreenStatus = ScreenStatus.CONTENT,
     val exchangeStatus: ExchangeStatus = ExchangeStatus.Idle,
+    val selectedBalance: CurrencyBalance? = null,
+    val selectedRate: ExchangeRate? = null,
+    val exchangeAmount: Double? = null,
 ) {
     enum class ScreenStatus {
-        LOADING, FAILURE, IDLE;
+        LOADING, FAILURE, CONTENT;
     }
 
     sealed interface ExchangeStatus {

@@ -1,4 +1,4 @@
-package com.example.currencyconverter.features.exchange
+package com.example.currencyconverter.features.exchange.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.example.currencyconverter.core.design_system.theme.AppTheme
 
 @Composable
-fun ExchangeScreen(modifier: Modifier = Modifier) {
+internal fun ExchangeScreen(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         AppBar()
         Spacer(modifier = Modifier.height(16.dp))

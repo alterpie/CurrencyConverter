@@ -43,9 +43,11 @@ android {
 dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material)
+    implementation(libs.compose.material3)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.hilt)
+    implementation(libs.hilt.navigation.compose)
     implementation(libs.lifecycle)
     implementation(libs.kotlinx.immutableCollections)
     implementation(projects.core.exchange)

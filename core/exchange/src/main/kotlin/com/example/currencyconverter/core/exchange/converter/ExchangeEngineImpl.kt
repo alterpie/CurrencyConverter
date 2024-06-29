@@ -18,6 +18,7 @@ internal class ExchangeEngineImpl @Inject constructor(
             val converted = convert(exchangeTransaction.amount, exchangeTransaction.rate.value)
             Result.success(
                 ExchangeResult(
+                    oldBaseBalance = exchangeTransaction.baseBalance,
                     newBaseBalance = exchangeTransaction.baseBalance - exchangeTransaction.amount,
                     convertedAmount = converted,
                     fee = feeAmount,

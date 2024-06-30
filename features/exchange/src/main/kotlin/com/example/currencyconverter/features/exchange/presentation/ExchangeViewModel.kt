@@ -10,7 +10,7 @@ import com.example.currencyconverter.core.exchange.converter.error.ExchangeError
 import com.example.currencyconverter.core.exchange.rates.model.ExchangeRate
 import com.example.currencyconverter.core.exchange.rates.repository.ExchangeRatesRepository
 import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState.ExchangeStatus
-import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState.ScreenStatus
+import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState.RatesStatus
 import com.example.currencyconverter.features.exchange.presentation.usecase.ClearDataUseCase
 import com.example.currencyconverter.features.exchange.presentation.usecase.ExchangeCurrencyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,7 +58,7 @@ internal class ExchangeViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         rates = rates.toImmutableList(),
-                        screenStatus = ScreenStatus.CONTENT,
+                        ratesStatus = RatesStatus.CONTENT,
                         selectedRate = selectedRate,
                     )
                 }
@@ -156,7 +156,7 @@ internal class ExchangeViewModel @Inject constructor(
                 exchangeRatesRepository.refreshRates()
                     .onFailure {
                         if (_state.value.rates.isEmpty()) {
-                            _state.update { it.copy(screenStatus = ScreenStatus.FAILURE) }
+                            _state.update { it.copy(ratesStatus = RatesStatus.FAILURE) }
                         }
                     }
                 delay(REFRESH_DELAY_MS)
@@ -166,7 +166,7 @@ internal class ExchangeViewModel @Inject constructor(
 
     override fun onStart(owner: LifecycleOwner) {
         if (_state.value.rates.isEmpty()) {
-            _state.update { it.copy(screenStatus = ScreenStatus.LOADING) }
+            _state.update { it.copy(ratesStatus = RatesStatus.LOADING) }
         }
         refreshRates()
     }

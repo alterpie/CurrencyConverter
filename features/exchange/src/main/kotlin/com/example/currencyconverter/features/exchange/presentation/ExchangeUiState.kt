@@ -9,13 +9,13 @@ import kotlinx.collections.immutable.persistentListOf
 internal data class ExchangeUiState(
     val balances: ImmutableList<CurrencyBalance> = persistentListOf(),
     val rates: ImmutableList<ExchangeRate> = persistentListOf(),
-    val screenStatus: ScreenStatus = ScreenStatus.CONTENT,
+    val ratesStatus: RatesStatus = RatesStatus.CONTENT,
     val exchangeStatus: ExchangeStatus = ExchangeStatus.Idle,
     val selectedBalance: CurrencyBalance? = null,
     val selectedRate: ExchangeRate? = null,
     val exchangeAmount: Double? = null,
 ) {
-    enum class ScreenStatus {
+    enum class RatesStatus {
         LOADING, FAILURE, CONTENT;
     }
 

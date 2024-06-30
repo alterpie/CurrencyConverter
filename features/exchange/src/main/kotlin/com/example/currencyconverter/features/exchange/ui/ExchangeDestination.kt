@@ -76,6 +76,7 @@ fun ExchangeDestination() {
         onSelectBalanceClick = { showSelectBalanceSheet = true },
         onSelectRateClick = { showSelectRateSheet = true },
         onExchangeAmountChange = { viewModel.onExchangeAmountChange(it) },
+        onResetClick = { viewModel.clearData() }
     )
 
     CurrencyExchangeStatusContent(

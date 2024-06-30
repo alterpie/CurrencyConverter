@@ -11,6 +11,7 @@ import com.example.currencyconverter.core.exchange.rates.model.ExchangeRate
 import com.example.currencyconverter.core.exchange.rates.repository.ExchangeRatesRepository
 import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState.ExchangeStatus
 import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState.ScreenStatus
+import com.example.currencyconverter.features.exchange.presentation.usecase.ClearDataUseCase
 import com.example.currencyconverter.features.exchange.presentation.usecase.ExchangeCurrencyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
@@ -35,6 +36,7 @@ internal class ExchangeViewModel @Inject constructor(
     private val exchangeCurrencyUseCase: ExchangeCurrencyUseCase,
     private val exchangeRatesRepository: ExchangeRatesRepository,
     private val balanceRepository: BalanceRepository,
+    private val clearDataUseCase: ClearDataUseCase,
 ) : ViewModel(), DefaultLifecycleObserver {
 
     private val _state = MutableStateFlow(ExchangeUiState())
@@ -174,7 +176,9 @@ internal class ExchangeViewModel @Inject constructor(
     }
 
     fun clearData() {
-        // clear balances and counters
+        viewModelScope.launch {
+            clearDataUseCase.execute()
+        }
     }
 
     private companion object {

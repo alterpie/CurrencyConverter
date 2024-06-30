@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,10 +42,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.example.currencyconverter.core.balance.model.CurrencyBalance
 import com.example.currencyconverter.core.design_system.theme.AppTheme
+import com.example.currencyconverter.features.exchange.R
 import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState
 import java.util.Locale
 
@@ -55,6 +58,7 @@ internal fun ExchangeScreen(
     onExchangeAmountChange: (amountInput: String) -> Unit,
     onSelectRateClick: () -> Unit,
     onExchangeCurrencyClick: (amountInput: String) -> Unit,
+    onResetClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var sellInput by remember {
@@ -66,7 +70,7 @@ internal fun ExchangeScreen(
             .navigationBarsPadding()
             .imePadding()
     ) {
-        AppBar()
+        AppBar(onResetClick = onResetClick)
         if (state.screenStatus === ExchangeUiState.ScreenStatus.LOADING) {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -74,7 +78,10 @@ internal fun ExchangeScreen(
             return
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "My balances", modifier = Modifier.padding(horizontal = 16.dp))
+        Text(
+            text = stringResource(R.string.my_balances),
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
         Spacer(modifier = Modifier.height(18.dp))
         LazyRow(contentPadding = PaddingValues(horizontal = 16.dp)) {
             items(state.balances) { balance ->
@@ -84,7 +91,10 @@ internal fun ExchangeScreen(
         }
         // balances
         Spacer(modifier = Modifier.height(24.dp))
-        Text(text = "Currency exchange", modifier = Modifier.padding(horizontal = 16.dp))
+        Text(
+            text = stringResource(R.string.currency_exchange),
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -100,7 +110,7 @@ internal fun ExchangeScreen(
                 contentScale = ContentScale.None,
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "Sell", modifier = Modifier.weight(1f))
+            Text(text = stringResource(R.string.sell), modifier = Modifier.weight(1f))
             TextField(
                 value = sellInput,
                 onValueChange = { input ->
@@ -141,7 +151,7 @@ internal fun ExchangeScreen(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Receive",
+                text = stringResource(R.string.receive),
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 4.dp)
@@ -177,13 +187,16 @@ internal fun ExchangeScreen(
             enabled = state.selectedBalance != null && state.selectedRate != null
                     && state.exchangeAmount != null && state.exchangeAmount > 0
         ) {
-            Text(text = "Submit")
+            Text(text = stringResource(R.string.submit))
         }
     }
 }
 
 @Composable
-private fun AppBar(modifier: Modifier = Modifier) {
+private fun AppBar(
+    onResetClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     TopAppBar(modifier = modifier) {
         Spacer(modifier = Modifier.width(16.dp))
         Column {
@@ -192,7 +205,13 @@ private fun AppBar(modifier: Modifier = Modifier) {
                     WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
                 )
             )
-            Text(text = "Currency converter")
+            Row {
+                Text(text = stringResource(R.string.currency_converter))
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(onClick = onResetClick) {
+                    Text(text = stringResource(R.string.reset))
+                }
+            }
         }
     }
 }
@@ -216,6 +235,7 @@ private fun PreviewExchangeScreen() {
             onSelectBalanceClick = {},
             onSelectRateClick = {},
             onExchangeAmountChange = {},
+            onResetClick = {},
         )
     }
 }

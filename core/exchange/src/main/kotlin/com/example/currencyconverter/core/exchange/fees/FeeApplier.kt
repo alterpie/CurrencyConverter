@@ -4,5 +4,5 @@ import com.example.currencyconverter.core.exchange.converter.model.ExchangeTrans
 
 internal interface FeeApplier {
 
-    fun apply(exchangeTransaction: ExchangeTransaction): FeeWeight
+    suspend fun apply(exchangeTransaction: ExchangeTransaction): FeeWeight
 }

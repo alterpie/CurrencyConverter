@@ -13,16 +13,16 @@ internal val LightColors = lightColors(
 
 val Colors.textPrimary
     get() = if (isLight) {
-        Color.White
-    } else {
         Color.Black
+    } else {
+        Color.White
     }
 
 val Colors.textSecondary
     get() = if (isLight) {
-        Color(175, 180, 190, 255)
-    } else {
         Color(126, 132, 144)
+    } else {
+        Color(175, 180, 190, 255)
     }
 
 val IndicationNegative = Color(240, 81, 82)

@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 internal class TradedCurrencyFee @Inject constructor() : FeeApplier {
 
-    override fun apply(exchangeTransaction: ExchangeTransaction): FeeWeight {
+    override suspend fun apply(exchangeTransaction: ExchangeTransaction): FeeWeight {
         return FeeWeight.Accumulative(exchangeTransaction.amount * 0.07)
     }
 }

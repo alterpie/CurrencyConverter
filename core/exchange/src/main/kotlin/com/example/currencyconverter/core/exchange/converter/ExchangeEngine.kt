@@ -8,5 +8,5 @@ interface ExchangeEngine {
     /**
      * Converts currency amount based on provided  [ExchangeTransaction].
      */
-    fun convert(exchangeTransaction: ExchangeTransaction): Result<ExchangeResult>
+    suspend fun convert(exchangeTransaction: ExchangeTransaction): Result<ExchangeResult>
 }

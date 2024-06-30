@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.kotlinx.serialization)
     implementation(libs.kotlinx.coroutines)
+    implementation(libs.androidx.datastore)
 
     ksp(libs.hilt.compiler)
 

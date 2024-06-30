@@ -176,7 +176,7 @@ internal class ExchangeViewModel @Inject constructor(
     }
 
     fun clearData() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             clearDataUseCase.execute()
         }
     }

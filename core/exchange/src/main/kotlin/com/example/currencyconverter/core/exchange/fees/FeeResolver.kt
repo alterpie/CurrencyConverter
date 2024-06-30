@@ -5,7 +5,7 @@ import com.example.currencyconverter.core.exchange.converter.model.ExchangeTrans
 internal interface FeeResolver {
 
     /**
-         * Calculates fee amount for provided [ExchangeTransaction].
+     * Calculates fee amount for provided [ExchangeTransaction].
      */
-    fun resolve(exchangeTransaction: ExchangeTransaction): Double
+    suspend fun resolve(exchangeTransaction: ExchangeTransaction): Double
 }

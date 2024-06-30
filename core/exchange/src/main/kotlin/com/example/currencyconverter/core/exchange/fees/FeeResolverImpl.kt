@@ -7,7 +7,7 @@ internal class FeeResolverImpl @Inject constructor(
     private val feeAppliers: Set<@JvmSuppressWildcards FeeApplier>,
 ) : FeeResolver {
 
-    override fun resolve(exchangeTransaction: ExchangeTransaction): Double {
+    override suspend fun resolve(exchangeTransaction: ExchangeTransaction): Double {
         var totalFee = 0.0
         for (applier in feeAppliers) {
             when (val weight = applier.apply(exchangeTransaction)) {

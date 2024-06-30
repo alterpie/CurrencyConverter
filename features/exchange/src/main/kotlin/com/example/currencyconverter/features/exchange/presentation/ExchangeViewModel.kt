@@ -37,7 +37,7 @@ internal class ExchangeViewModel @Inject constructor(
     private val _state = MutableStateFlow(ExchangeUiState())
     val state: StateFlow<ExchangeUiState> = _state
 
-    private val refreshJob: Job = Job()
+    private var refreshJob: Job = Job()
 
     init {
         getRates()
@@ -47,10 +47,12 @@ internal class ExchangeViewModel @Inject constructor(
     private fun getRates() {
         exchangeRatesRepository.getRates()
             .onEach { rates ->
+                val selectedRate = _state.value.selectedRate ?: rates.firstOrNull()
                 _state.update {
                     it.copy(
                         rates = rates.toImmutableList(),
                         screenStatus = ScreenStatus.CONTENT,
+                        selectedRate = selectedRate,
                     )
                 }
             }
@@ -59,7 +61,15 @@ internal class ExchangeViewModel @Inject constructor(
 
     private fun getBalances() {
         balanceRepository.getBalances()
-            .onEach { balances -> _state.update { it.copy(balances = balances.toImmutableList()) } }
+            .onEach { balances ->
+                val selectedBalance = _state.value.selectedBalance ?: balances.firstOrNull()
+                _state.update {
+                    it.copy(
+                        balances = balances.toImmutableList(),
+                        selectedBalance = selectedBalance,
+                    )
+                }
+            }
             .launchIn(viewModelScope)
     }
 
@@ -119,7 +129,7 @@ internal class ExchangeViewModel @Inject constructor(
     }
 
     private fun refreshRates() {
-        viewModelScope.launch(refreshJob) {
+        refreshJob = viewModelScope.launch {
             while (isActive) {
                 exchangeRatesRepository.refreshRates()
                     .onFailure {

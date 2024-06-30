@@ -7,11 +7,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,90 +50,97 @@ internal fun ExchangeScreen(
     onExchangeCurrencyClick: (amountInput: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (state.screenStatus === ExchangeUiState.ScreenStatus.LOADING) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }
-        return
-    }
     var sellInput by remember {
         mutableStateOf("")
     }
-    Column(modifier = modifier.fillMaxSize()) {
-        AppBar()
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "My balances")
-        Spacer(modifier = Modifier.height(18.dp))
-        // balances
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(text = "Currency exchange")
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(android.R.drawable.arrow_up_float),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(Color.Red),
-                contentScale = ContentScale.None,
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "Sell", modifier = Modifier.weight(1f))
-            TextField(
-                value = sellInput,
-                onValueChange = { input ->
-                    sellInput = input
-                    onExchangeAmountChange(input)
-                },
-                singleLine = true,
-                modifier = Modifier.weight(0.5f)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable(onClick = onSelectBalanceClick)
-            ) {
-                Text(text = state.selectedBalance?.currency?.name ?: "")
-                Spacer(modifier = Modifier.width(8.dp))
-                Image(
-                    painter = painterResource(android.R.drawable.arrow_down_float),
-                    contentDescription = null
-                )
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .navigationBarsPadding()
+            .imePadding()
+    ) {
+        AppBar(modifier = Modifier.statusBarsPadding())
+        if (state.screenStatus === ExchangeUiState.ScreenStatus.LOADING) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
+            return
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Divider()
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(android.R.drawable.arrow_down_float),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(Color.Green),
-                contentScale = ContentScale.None,
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "Receive",
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 4.dp)
-            )
-            Text(text = state.exchangeAmount?.let { String.format("%.2f", it) } ?: "")
-            Spacer(modifier = Modifier.width(16.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable(onClick = onSelectRateClick)
-            ) {
-                Text(text = state.selectedRate?.currency?.name ?: "")
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "My balances")
+            Spacer(modifier = Modifier.height(18.dp))
+            // balances
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(text = "Currency exchange")
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(android.R.drawable.arrow_up_float),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(Color.Red),
+                    contentScale = ContentScale.None,
+                )
                 Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "Sell", modifier = Modifier.weight(1f))
+                TextField(
+                    value = sellInput,
+                    onValueChange = { input ->
+                        sellInput = input
+                        onExchangeAmountChange(input)
+                    },
+                    singleLine = true,
+                    modifier = Modifier.weight(0.5f)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable(onClick = onSelectBalanceClick)
+                ) {
+                    Text(text = state.selectedBalance?.currency?.name ?: "")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Image(
+                        painter = painterResource(android.R.drawable.arrow_down_float),
+                        contentDescription = null
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Divider()
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(android.R.drawable.arrow_down_float),
                     contentDescription = null,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(Color.Green),
+                    contentScale = ContentScale.None,
                 )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Receive",
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 4.dp)
+                )
+                Text(text = state.exchangeAmount?.let { String.format("%.2f", it) } ?: "")
+                Spacer(modifier = Modifier.width(16.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable(onClick = onSelectRateClick)
+                ) {
+                    Text(text = state.selectedRate?.currency?.name ?: "")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Image(
+                        painter = painterResource(android.R.drawable.arrow_down_float),
+                        contentDescription = null,
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -137,6 +148,7 @@ internal fun ExchangeScreen(
             onClick = { onExchangeCurrencyClick(sellInput) },
             modifier = Modifier
                 .fillMaxWidth()
+                .defaultMinSize(minHeight = 78.dp)
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             shape = RoundedCornerShape(50),
             enabled = state.selectedBalance != null && state.selectedRate != null
@@ -150,6 +162,7 @@ internal fun ExchangeScreen(
 @Composable
 private fun AppBar(modifier: Modifier = Modifier) {
     TopAppBar(modifier = modifier) {
+        Spacer(modifier = Modifier.width(16.dp))
         Text(text = "Currency converter")
     }
 }

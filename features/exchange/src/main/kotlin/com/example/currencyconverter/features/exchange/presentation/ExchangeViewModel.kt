@@ -19,7 +19,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
@@ -38,10 +41,12 @@ internal class ExchangeViewModel @Inject constructor(
     val state: StateFlow<ExchangeUiState> = _state
 
     private var refreshJob: Job = Job()
+    private val amountInput = MutableStateFlow("")
 
     init {
         getRates()
         getBalances()
+        updateExchangedAmount()
     }
 
     private fun getRates() {
@@ -82,7 +87,21 @@ internal class ExchangeViewModel @Inject constructor(
     }
 
     fun onExchangeAmountChange(amountInput: String) {
-        _state.update { it.copy(exchangeAmount = amountInput.toDouble()) }
+        this.amountInput.value = amountInput
+    }
+
+    private fun updateExchangedAmount() {
+        combine(
+            amountInput
+                .map { it.toDoubleOrNull() }
+                .filterNotNull(),
+            _state
+                .map { it.selectedRate }
+                .filterNotNull()
+        ) { amount, rate ->
+            _state.update { it.copy(exchangeAmount = amount * rate.value) }
+        }
+            .launchIn(viewModelScope)
     }
 
     fun clearExchangeStatus() {
@@ -107,7 +126,7 @@ internal class ExchangeViewModel @Inject constructor(
                         _state.update {
                             it.copy(
                                 exchangeStatus = ExchangeStatus.Success(
-                                    traded = base to (result.oldBaseBalance - result.newBaseBalance),
+                                    traded = base to result.tradedAmount,
                                     bought = targetCurrency to result.convertedAmount,
                                     fee = result.feeCurrency to result.fee,
                                 )
@@ -118,6 +137,7 @@ internal class ExchangeViewModel @Inject constructor(
                         val status = if (throwable is ExchangeError) {
                             when (throwable) {
                                 is ExchangeError.FeeTooHigh -> ExchangeStatus.ErrorFeeTooHigh
+                                is ExchangeError.NotEnoughBalance -> ExchangeStatus.ErrorNotEnoughBalance
                             }
                         } else {
                             ExchangeStatus.Idle

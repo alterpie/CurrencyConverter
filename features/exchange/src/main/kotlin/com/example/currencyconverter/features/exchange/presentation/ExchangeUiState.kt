@@ -23,6 +23,7 @@ internal data class ExchangeUiState(
         data object Idle : ExchangeStatus
         data object Loading : ExchangeStatus
         data object ErrorFeeTooHigh : ExchangeStatus
+        data object ErrorNotEnoughBalance : ExchangeStatus
         data class Success(
             val traded: Pair<Currency, Double>,
             val bought: Pair<Currency, Double>,

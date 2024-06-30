@@ -8,7 +8,9 @@ interface BalanceRepository {
 
     fun getBalances(): Flow<List<CurrencyBalance>>
 
-    suspend fun updateBalance(currency: Currency, amount: Double)
+    suspend fun addToBalance(currency: Currency, amount: Double)
+
+    suspend fun deductFromBalance(currency: Currency, amount: Double)
 
     suspend fun clearAll()
 }

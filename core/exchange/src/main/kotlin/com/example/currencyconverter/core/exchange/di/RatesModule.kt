@@ -23,6 +23,7 @@ import javax.inject.Singleton
 @Module
 internal interface RatesModule {
 
+    @Singleton
     @Binds
     fun exchangeRatesRepository(impl: ExchangeRatesRepositoryImpl): ExchangeRatesRepository
 

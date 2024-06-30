@@ -18,8 +18,18 @@ internal class BalanceLocalDataSourceImpl @Inject constructor(
             .map { balances -> balances.map { it.map() } }
     }
 
-    override suspend fun updateBalance(currency: Currency, amount: Double) {
-        currencyBalanceDao.updateBalance(CurrencyBalanceEntity(currency, amount))
+    override suspend fun addToBalance(currency: Currency, amount: Double) {
+        val storedBalance = currencyBalanceDao.getBalance(currency)
+        val updatedBalance = storedBalance?.let {
+            it.copy(amount = it.amount + amount)
+        } ?: CurrencyBalanceEntity(currency, amount)
+        currencyBalanceDao.updateBalance(updatedBalance)
+    }
+
+    override suspend fun deductFromBalance(currency: Currency, amount: Double) {
+        currencyBalanceDao.getBalance(currency)?.let {
+            currencyBalanceDao.updateBalance(it.copy(amount = it.amount - amount))
+        }
     }
 
     override suspend fun clear() {

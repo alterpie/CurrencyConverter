@@ -5,8 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,8 +18,10 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -38,8 +43,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.example.currencyconverter.core.balance.model.CurrencyBalance
 import com.example.currencyconverter.core.design_system.theme.AppTheme
 import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState
+import java.util.Locale
 
 @Composable
 internal fun ExchangeScreen(
@@ -59,88 +66,104 @@ internal fun ExchangeScreen(
             .navigationBarsPadding()
             .imePadding()
     ) {
-        AppBar(modifier = Modifier.statusBarsPadding())
+        AppBar()
         if (state.screenStatus === ExchangeUiState.ScreenStatus.LOADING) {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
             return
         }
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "My balances")
-            Spacer(modifier = Modifier.height(18.dp))
-            // balances
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(text = "Currency exchange")
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(android.R.drawable.arrow_up_float),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color.Red),
-                    contentScale = ContentScale.None,
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Sell", modifier = Modifier.weight(1f))
-                TextField(
-                    value = sellInput,
-                    onValueChange = { input ->
-                        sellInput = input
-                        onExchangeAmountChange(input)
-                    },
-                    singleLine = true,
-                    modifier = Modifier.weight(0.5f)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable(onClick = onSelectBalanceClick)
-                ) {
-                    Text(text = state.selectedBalance?.currency?.name ?: "")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Image(
-                        painter = painterResource(android.R.drawable.arrow_down_float),
-                        contentDescription = null
-                    )
-                }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "My balances", modifier = Modifier.padding(horizontal = 16.dp))
+        Spacer(modifier = Modifier.height(18.dp))
+        LazyRow(contentPadding = PaddingValues(horizontal = 16.dp)) {
+            items(state.balances) { balance ->
+                BalanceItem(balance = balance)
+                Spacer(modifier = Modifier.width(24.dp))
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Divider()
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
+        }
+        // balances
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(text = "Currency exchange", modifier = Modifier.padding(horizontal = 16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            Image(
+                painter = painterResource(android.R.drawable.arrow_up_float),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.Red),
+                contentScale = ContentScale.None,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "Sell", modifier = Modifier.weight(1f))
+            TextField(
+                value = sellInput,
+                onValueChange = { input ->
+                    sellInput = input
+                    onExchangeAmountChange(input)
+                },
+                singleLine = true,
+                modifier = Modifier.weight(0.5f)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable(onClick = onSelectBalanceClick)
+            ) {
+                Text(text = state.selectedBalance?.currency?.name ?: "")
+                Spacer(modifier = Modifier.width(8.dp))
+                Image(
+                    painter = painterResource(android.R.drawable.arrow_down_float),
+                    contentDescription = null
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Divider(modifier = Modifier.padding(horizontal = 16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            Image(
+                painter = painterResource(android.R.drawable.arrow_down_float),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.Green),
+                contentScale = ContentScale.None,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Receive",
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 4.dp)
+            )
+            Text(text = state.exchangeAmount?.let {
+                String.format(
+                    Locale.getDefault(),
+                    "%.2f",
+                    it
+                )
+            } ?: "")
+            Spacer(modifier = Modifier.width(16.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable(onClick = onSelectRateClick)
+            ) {
+                Text(text = state.selectedRate?.currency?.name ?: "")
+                Spacer(modifier = Modifier.width(8.dp))
                 Image(
                     painter = painterResource(android.R.drawable.arrow_down_float),
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color.Green),
-                    contentScale = ContentScale.None,
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Receive",
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 4.dp)
-                )
-                Text(text = state.exchangeAmount?.let { String.format("%.2f", it) } ?: "")
-                Spacer(modifier = Modifier.width(16.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable(onClick = onSelectRateClick)
-                ) {
-                    Text(text = state.selectedRate?.currency?.name ?: "")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Image(
-                        painter = painterResource(android.R.drawable.arrow_down_float),
-                        contentDescription = null,
-                    )
-                }
             }
         }
         Spacer(modifier = Modifier.weight(1f))
@@ -163,8 +186,24 @@ internal fun ExchangeScreen(
 private fun AppBar(modifier: Modifier = Modifier) {
     TopAppBar(modifier = modifier) {
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = "Currency converter")
+        Column {
+            Spacer(
+                modifier = Modifier.height(
+                    WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+                )
+            )
+            Text(text = "Currency converter")
+        }
     }
+}
+
+@Composable
+private fun BalanceItem(
+    balance: CurrencyBalance,
+    modifier: Modifier = Modifier,
+) {
+    val balanceFormated = String.format(Locale.getDefault(), "%.2f", balance.amount)
+    Text(text = "$balanceFormated ${balance.currency.name}", modifier = modifier)
 }
 
 @PreviewLightDark

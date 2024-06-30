@@ -11,6 +11,9 @@ internal class ExchangeEngineImpl @Inject constructor(
 ) : ExchangeEngine {
 
     override fun convert(exchangeTransaction: ExchangeTransaction): Result<ExchangeResult> {
+        if (exchangeTransaction.amount > exchangeTransaction.baseBalance){
+            return Result.failure(ExchangeError.NotEnoughBalance())
+        }
         val feeAmount = feeResolver.resolve(exchangeTransaction)
         return if (feeAmount > exchangeTransaction.baseBalance) {
             Result.failure(ExchangeError.FeeTooHigh())
@@ -18,8 +21,7 @@ internal class ExchangeEngineImpl @Inject constructor(
             val converted = convert(exchangeTransaction.amount, exchangeTransaction.rate.value)
             Result.success(
                 ExchangeResult(
-                    oldBaseBalance = exchangeTransaction.baseBalance,
-                    newBaseBalance = exchangeTransaction.baseBalance - exchangeTransaction.amount,
+                    tradedAmount = exchangeTransaction.amount,
                     convertedAmount = converted,
                     fee = feeAmount,
                     feeCurrency = exchangeTransaction.base,

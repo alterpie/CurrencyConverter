@@ -5,6 +5,7 @@
 <string name="exchange_successful_trade_message_with_fee">You have converted %s %s to %s %s. Commission fee %s %s</string>
 <string name="exchange_successful_trade_action">Done</string>
 <string name="exchange_conversion_error_title">Oops..</string>
-<string name="exchange_conversion_error_message">Commission exceeds balance</string>
-<string name="exchange_conversion_error_action">Ok</string>
+<string name="exchange_conversion_error_commission_exceeds_balance">Commission exceeds balance</string>
+<string name="exchange_conversion_error_balance_too_low">Balance is too low</string>
+<string name="exchange_conversion_error_action">OK</string>
 </resources>

@@ -18,18 +18,9 @@ internal fun CurrencyExchangeStatusContent(
 ) {
     when (status) {
         ExchangeUiState.ExchangeStatus.ErrorFeeTooHigh -> {
-            AlertDialog(
-                modifier = modifier,
-                title = { Text(text = stringResource(R.string.exchange_conversion_error_title)) },
-                text = {
-                    Text(text = stringResource(R.string.exchange_conversion_error_message))
-                },
-                onDismissRequest = onStatusHandled,
-                confirmButton = {
-                    Button(onClick = onStatusHandled) {
-                        Text(text = stringResource(R.string.exchange_conversion_error_action))
-                    }
-                },
+            ErrorDialog(
+                message = stringResource(R.string.exchange_conversion_error_commission_exceeds_balance),
+                onDismiss = onStatusHandled
             )
         }
 
@@ -39,14 +30,13 @@ internal fun CurrencyExchangeStatusContent(
             val format = DecimalFormat.getInstance().apply { maximumFractionDigits = 2 }
             val traded = format.format(status.traded.second)
             val bought = format.format(status.bought.second)
-            val fee = status.fee?.second?.let(format::format)
+            val fee = status.fee?.second?.takeIf { it > 0 }?.let(format::format)
             AlertDialog(
                 title = { Text(text = stringResource(R.string.exchange_successful_trade_title)) },
                 text = {
                     val value = if (fee != null) {
                         stringResource(
                             R.string.exchange_successful_trade_message_with_fee,
-                            R.string.exchange_successful_trade_message,
                             traded,
                             status.traded.first.name,
                             bought,
@@ -74,5 +64,33 @@ internal fun CurrencyExchangeStatusContent(
                 },
             )
         }
+
+        ExchangeUiState.ExchangeStatus.ErrorNotEnoughBalance -> {
+            ErrorDialog(
+                message = stringResource(R.string.exchange_conversion_error_balance_too_low),
+                onDismiss = onStatusHandled
+            )
+        }
     }
+}
+
+@Composable
+private fun ErrorDialog(
+    message: String,
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        modifier = modifier,
+        title = { Text(text = stringResource(R.string.exchange_conversion_error_title)) },
+        text = {
+            Text(text = message)
+        },
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text(text = stringResource(R.string.exchange_conversion_error_action))
+            }
+        },
+    )
 }

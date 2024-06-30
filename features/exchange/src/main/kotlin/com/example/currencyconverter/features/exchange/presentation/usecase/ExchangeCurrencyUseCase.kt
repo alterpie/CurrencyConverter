@@ -30,15 +30,24 @@ internal class ExchangeCurrencyUseCase @Inject constructor(
                 val buyeableCurrency = rates.first { rate -> rate.currency == target }
                 val currentBalance = balances.first { balance -> balance.currency == base }
 
-                ExchangeTransaction(
+                val transaction = ExchangeTransaction(
                     base = currentBalance.currency,
                     baseBalance = currentBalance.amount,
                     amount = amount,
                     rate = buyeableCurrency,
                 )
-            }
-            .map { transaction ->
+
                 exchangeEngine.convert(transaction)
+                    .onSuccess { exchangeResult ->
+                        balanceRepository.addToBalance(
+                            currency = target,
+                            amount = exchangeResult.convertedAmount,
+                        )
+                        balanceRepository.deductFromBalance(
+                            currency = base,
+                            amount = exchangeResult.tradedAmount + exchangeResult.fee,
+                        )
+                    }
             }
             .first()
     }

@@ -14,8 +14,12 @@ internal class BalanceRepositoryImpl @Inject constructor(
         return balanceLocalDataSource.getBalances()
     }
 
-    override suspend fun updateBalance(currency: Currency, amount: Double) {
-        balanceLocalDataSource.updateBalance(currency, amount)
+    override suspend fun addToBalance(currency: Currency, amount: Double) {
+        balanceLocalDataSource.addToBalance(currency, amount)
+    }
+
+    override suspend fun deductFromBalance(currency: Currency, amount: Double) {
+        balanceLocalDataSource.deductFromBalance(currency, amount)
     }
 
     override suspend fun clearAll() {

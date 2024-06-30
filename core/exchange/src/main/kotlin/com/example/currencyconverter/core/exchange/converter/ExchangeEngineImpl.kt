@@ -11,7 +11,7 @@ internal class ExchangeEngineImpl @Inject constructor(
 ) : ExchangeEngine {
 
     override suspend fun convert(exchangeTransaction: ExchangeTransaction): Result<ExchangeResult> {
-        if (exchangeTransaction.amount > exchangeTransaction.baseBalance){
+        if (exchangeTransaction.amount > exchangeTransaction.baseBalance) {
             return Result.failure(ExchangeError.NotEnoughBalance())
         }
         val feeAmount = feeResolver.resolve(exchangeTransaction)
@@ -24,7 +24,6 @@ internal class ExchangeEngineImpl @Inject constructor(
                     tradedAmount = exchangeTransaction.amount,
                     convertedAmount = converted,
                     fee = feeAmount,
-                    feeCurrency = exchangeTransaction.base,
                 )
             )
         }

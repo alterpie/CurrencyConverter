@@ -1,7 +1,9 @@
-package com.example.currencyconverter.core.exchange.fees
+package com.example.currencyconverter.core.exchange.fees.rules
 
 import com.example.currencyconverter.core.exchange.attempts.ExchangeAttemptsRepository
 import com.example.currencyconverter.core.exchange.converter.model.ExchangeTransaction
+import com.example.currencyconverter.core.exchange.fees.FeeApplier
+import com.example.currencyconverter.core.exchange.fees.FeeWeight
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take

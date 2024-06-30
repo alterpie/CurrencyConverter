@@ -11,8 +11,8 @@ import com.example.currencyconverter.core.exchange.converter.ExchangeEngineImpl
 import com.example.currencyconverter.core.exchange.fees.FeeApplier
 import com.example.currencyconverter.core.exchange.fees.FeeResolver
 import com.example.currencyconverter.core.exchange.fees.FeeResolverImpl
-import com.example.currencyconverter.core.exchange.fees.FirstFiveTransactionsFreeFeeApplier
-import com.example.currencyconverter.core.exchange.fees.TradedCurrencyFee
+import com.example.currencyconverter.core.exchange.fees.rules.FirstFiveTransactionsFreeFeeApplier
+import com.example.currencyconverter.core.exchange.fees.rules.TradedCurrencyFee
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

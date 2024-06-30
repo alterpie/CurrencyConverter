@@ -1,6 +1,8 @@
-package com.example.currencyconverter.core.exchange.fees
+package com.example.currencyconverter.core.exchange.fees.rules
 
 import com.example.currencyconverter.core.exchange.converter.model.ExchangeTransaction
+import com.example.currencyconverter.core.exchange.fees.FeeApplier
+import com.example.currencyconverter.core.exchange.fees.FeeWeight
 import javax.inject.Inject
 
 internal class TradedCurrencyFee @Inject constructor() : FeeApplier {

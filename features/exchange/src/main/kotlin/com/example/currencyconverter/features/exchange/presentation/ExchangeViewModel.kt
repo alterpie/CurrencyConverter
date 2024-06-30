@@ -130,7 +130,7 @@ internal class ExchangeViewModel @Inject constructor(
                                 exchangeStatus = ExchangeStatus.Success(
                                     traded = base to result.tradedAmount,
                                     bought = targetCurrency to result.convertedAmount,
-                                    fee = result.feeCurrency to result.fee,
+                                    fee = base to result.fee,
                                 )
                             )
                         }

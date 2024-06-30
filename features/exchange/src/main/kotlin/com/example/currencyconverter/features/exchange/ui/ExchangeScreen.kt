@@ -26,10 +26,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.contentColorFor
+import androidx.compose.material.primarySurface
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,13 +43,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.example.currencyconverter.core.balance.model.CurrencyBalance
 import com.example.currencyconverter.core.design_system.theme.AppTheme
+import com.example.currencyconverter.core.design_system.theme.IndicationNegative
+import com.example.currencyconverter.core.design_system.theme.IndicationPositive
+import com.example.currencyconverter.core.design_system.theme.textPrimary
+import com.example.currencyconverter.core.design_system.theme.textSecondary
 import com.example.currencyconverter.features.exchange.R
 import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState
 import java.util.Locale
@@ -79,8 +88,9 @@ internal fun ExchangeScreen(
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = stringResource(R.string.my_balances),
-            modifier = Modifier.padding(horizontal = 16.dp)
+            text = stringResource(R.string.my_balances).uppercase(),
+            modifier = Modifier.padding(horizontal = 16.dp),
+            color = MaterialTheme.colors.textSecondary,
         )
         Spacer(modifier = Modifier.height(18.dp))
         LazyRow(contentPadding = PaddingValues(horizontal = 16.dp)) {
@@ -89,11 +99,11 @@ internal fun ExchangeScreen(
                 Spacer(modifier = Modifier.width(24.dp))
             }
         }
-        // balances
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = stringResource(R.string.currency_exchange),
-            modifier = Modifier.padding(horizontal = 16.dp)
+            text = stringResource(R.string.currency_exchange).uppercase(),
+            modifier = Modifier.padding(horizontal = 16.dp),
+            color = MaterialTheme.colors.textSecondary,
         )
         Spacer(modifier = Modifier.height(16.dp))
         Row(
@@ -106,11 +116,16 @@ internal fun ExchangeScreen(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(Color.Red),
+                    .background(IndicationNegative),
                 contentScale = ContentScale.None,
+                colorFilter = ColorFilter.tint(Color.White),
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = stringResource(R.string.sell), modifier = Modifier.weight(1f))
+            Text(
+                text = stringResource(R.string.sell),
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colors.textPrimary,
+            )
             TextField(
                 value = sellInput,
                 onValueChange = { input ->
@@ -118,18 +133,21 @@ internal fun ExchangeScreen(
                     onExchangeAmountChange(input)
                 },
                 singleLine = true,
-                modifier = Modifier.weight(0.5f)
+                modifier = Modifier.weight(0.5f),
             )
             Spacer(modifier = Modifier.width(16.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable(onClick = onSelectBalanceClick)
             ) {
-                Text(text = state.selectedBalance?.currency?.name ?: "")
+                Text(
+                    text = state.selectedBalance?.currency?.name ?: "",
+                    color = MaterialTheme.colors.textPrimary,
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Image(
                     painter = painterResource(android.R.drawable.arrow_down_float),
-                    contentDescription = null
+                    contentDescription = null,
                 )
             }
         }
@@ -146,15 +164,17 @@ internal fun ExchangeScreen(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(Color.Green),
+                    .background(IndicationPositive),
                 contentScale = ContentScale.None,
+                colorFilter = ColorFilter.tint(Color.White),
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = stringResource(R.string.receive),
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 4.dp)
+                    .padding(end = 4.dp),
+                color = MaterialTheme.colors.textPrimary,
             )
             Text(text = state.exchangeAmount?.let {
                 String.format(
@@ -168,7 +188,10 @@ internal fun ExchangeScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable(onClick = onSelectRateClick)
             ) {
-                Text(text = state.selectedRate?.currency?.name ?: "")
+                Text(
+                    text = state.selectedRate?.currency?.name ?: "",
+                    color = MaterialTheme.colors.textPrimary,
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Image(
                     painter = painterResource(android.R.drawable.arrow_down_float),
@@ -197,20 +220,28 @@ private fun AppBar(
     onResetClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    TopAppBar(modifier = modifier) {
-        Spacer(modifier = Modifier.width(16.dp))
-        Column {
-            Spacer(
-                modifier = Modifier.height(
-                    WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    Column(modifier = modifier.background(MaterialTheme.colors.primarySurface)) {
+        Spacer(
+            modifier = Modifier
+                .height(
+                    WindowInsets.statusBars
+                        .asPaddingValues()
+                        .calculateTopPadding()
                 )
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = stringResource(R.string.currency_converter),
+                color = MaterialTheme.colors.contentColorFor(MaterialTheme.colors.primarySurface)
             )
-            Row {
-                Text(text = stringResource(R.string.currency_converter))
-                Spacer(modifier = Modifier.weight(1f))
-                TextButton(onClick = onResetClick) {
-                    Text(text = stringResource(R.string.reset))
-                }
+            Spacer(modifier = Modifier.weight(1f))
+            TextButton(onClick = onResetClick) {
+                Text(
+                    text = stringResource(R.string.reset),
+                    color = MaterialTheme.colors.contentColorFor(MaterialTheme.colors.primarySurface)
+                )
             }
         }
     }
@@ -222,7 +253,12 @@ private fun BalanceItem(
     modifier: Modifier = Modifier,
 ) {
     val balanceFormated = String.format(Locale.getDefault(), "%.2f", balance.amount)
-    Text(text = "$balanceFormated ${balance.currency.name}", modifier = modifier)
+    Text(
+        text = "$balanceFormated ${balance.currency.name}",
+        modifier = modifier,
+        color = MaterialTheme.colors.textPrimary,
+        fontWeight = FontWeight.Bold,
+    )
 }
 
 @PreviewLightDark

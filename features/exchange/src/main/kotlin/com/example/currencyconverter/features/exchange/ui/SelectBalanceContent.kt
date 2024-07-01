@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.currencyconverter.core.balance.model.CurrencyBalance
 import kotlinx.collections.immutable.ImmutableList
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,6 +79,6 @@ private fun CurrencyBalanceItem(balance: CurrencyBalance, modifier: Modifier = M
                 .weight(1f)
                 .padding(end = 4.dp)
         )
-        Text(text = String.format(Locale.getDefault(), "%.2f", balance.amount))
+        Text(text = NumberFormatter.format(balance.amount))
     }
 }

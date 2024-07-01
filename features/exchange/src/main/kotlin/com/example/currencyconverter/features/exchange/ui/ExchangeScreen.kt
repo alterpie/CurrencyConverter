@@ -59,7 +59,6 @@ import com.example.currencyconverter.core.design_system.theme.textSecondary
 import com.example.currencyconverter.features.exchange.R
 import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState
 import kotlinx.collections.immutable.ImmutableList
-import java.util.Locale
 
 @Composable
 internal fun ExchangeScreen(
@@ -258,13 +257,7 @@ private fun ExchangeSection(
                 .padding(end = 4.dp),
             color = MaterialTheme.colors.textPrimary,
         )
-        Text(text = state.exchangeAmount?.let {
-            String.format(
-                Locale.getDefault(),
-                "%.2f",
-                it
-            )
-        } ?: "")
+        Text(text = state.exchangeAmount?.let { NumberFormatter.format(it) } ?: "")
         Spacer(modifier = Modifier.width(16.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -290,7 +283,7 @@ private fun BalanceItem(
     balance: CurrencyBalance,
     modifier: Modifier = Modifier,
 ) {
-    val balanceFormated = String.format(Locale.getDefault(), "%.2f", balance.amount)
+    val balanceFormated = NumberFormatter.format(balance.amount)
     Text(
         text = "$balanceFormated ${balance.currency.name}",
         modifier = modifier,

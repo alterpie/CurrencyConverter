@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.currencyconverter.core.exchange.rates.model.ExchangeRate
 import kotlinx.collections.immutable.ImmutableList
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,6 +75,6 @@ private fun ExchangeRateItem(rate: ExchangeRate, modifier: Modifier = Modifier) 
                 .weight(1f)
                 .padding(end = 4.dp)
         )
-        Text(text = String.format(Locale.getDefault(), "%.2f", rate.value))
+        Text(text = NumberFormatter.format(rate.value))
     }
 }

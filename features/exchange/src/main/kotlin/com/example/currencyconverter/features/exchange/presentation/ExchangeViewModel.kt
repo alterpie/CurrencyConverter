@@ -94,14 +94,13 @@ internal class ExchangeViewModel @Inject constructor(
 
     private fun updateExchangedAmount() {
         combine(
-            amountInput
-                .map { it.toDoubleOrNull() }
-                .filterNotNull(),
+            amountInput.map { it.toDoubleOrNull() },
             _state
                 .map { it.selectedRate }
                 .filterNotNull()
         ) { amount, rate ->
-            _state.update { it.copy(exchangeAmount = amount * rate.value) }
+
+            _state.update { it.copy(exchangeAmount = amount?.let { it * rate.value }) }
         }
             .launchIn(viewModelScope)
     }
@@ -116,6 +115,7 @@ internal class ExchangeViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(exchangeStatus = ExchangeStatus.Loading) }
             val amount = amountInput.toDouble()
+            // in production app dispatcher is injected in ViewModel constructor, use directly here for simplicity
             withContext(Dispatchers.IO) {
                 exchangeCurrencyUseCase.execute(
                     base = base,

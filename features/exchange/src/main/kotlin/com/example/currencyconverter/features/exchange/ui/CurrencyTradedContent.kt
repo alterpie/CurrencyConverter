@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.currencyconverter.features.exchange.R
 import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState
-import java.text.DecimalFormat
 
 @Composable
 internal fun CurrencyExchangeStatusContent(
@@ -27,10 +26,9 @@ internal fun CurrencyExchangeStatusContent(
         ExchangeUiState.ExchangeStatus.Idle -> Unit
         ExchangeUiState.ExchangeStatus.Loading -> Unit
         is ExchangeUiState.ExchangeStatus.Success -> {
-            val format = DecimalFormat.getInstance().apply { maximumFractionDigits = 2 }
-            val traded = format.format(status.traded.second)
-            val bought = format.format(status.bought.second)
-            val fee = status.fee?.second?.takeIf { it > 0 }?.let(format::format)
+            val traded = NumberFormatter.format(status.traded.second)
+            val bought = NumberFormatter.format(status.bought.second)
+            val fee = status.fee?.second?.takeIf { it > 0 }?.let(NumberFormatter::format)
             AlertDialog(
                 title = { Text(text = stringResource(R.string.exchange_successful_trade_title)) },
                 text = {

@@ -1,9 +1,9 @@
 package com.example.currencyconverter.core.exchange.converter.model
 
-import com.example.currencyconverter.core.exchange.rates.model.Currency
+import java.math.BigDecimal
 
 data class ExchangeResult(
-    val tradedAmount: Double,
-    val convertedAmount: Double,
-    val fee: Double,
+    val tradedAmount: BigDecimal,
+    val convertedAmount: BigDecimal,
+    val fee: BigDecimal,
 )

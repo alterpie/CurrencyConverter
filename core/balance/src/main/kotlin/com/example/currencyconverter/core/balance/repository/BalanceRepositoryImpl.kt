@@ -4,6 +4,7 @@ import com.example.currencyconverter.core.balance.local.BalanceLocalDataSource
 import com.example.currencyconverter.core.balance.model.CurrencyBalance
 import com.example.currencyconverter.core.exchange.rates.model.Currency
 import kotlinx.coroutines.flow.Flow
+import java.math.BigDecimal
 import javax.inject.Inject
 
 internal class BalanceRepositoryImpl @Inject constructor(
@@ -14,11 +15,11 @@ internal class BalanceRepositoryImpl @Inject constructor(
         return balanceLocalDataSource.getBalances()
     }
 
-    override suspend fun addToBalance(currency: Currency, amount: Double) {
+    override suspend fun addToBalance(currency: Currency, amount: BigDecimal) {
         balanceLocalDataSource.addToBalance(currency, amount)
     }
 
-    override suspend fun deductFromBalance(currency: Currency, amount: Double) {
+    override suspend fun deductFromBalance(currency: Currency, amount: BigDecimal) {
         balanceLocalDataSource.deductFromBalance(currency, amount)
     }
 

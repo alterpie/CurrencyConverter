@@ -5,6 +5,7 @@ import com.example.currencyconverter.core.exchange.rates.model.Currency
 import com.example.currencyconverter.core.exchange.rates.model.ExchangeRate
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import java.math.BigDecimal
 
 internal data class ExchangeUiState(
     val baseCurrency: Currency = Currency("EUR"),
@@ -14,7 +15,7 @@ internal data class ExchangeUiState(
     val exchangeStatus: ExchangeStatus = ExchangeStatus.Idle,
     val selectedBalance: CurrencyBalance? = null,
     val selectedRate: ExchangeRate? = null,
-    val exchangeAmount: Double? = null,
+    val exchangeAmount: BigDecimal? = null,
 ) {
     enum class RatesStatus {
         LOADING, FAILURE, CONTENT;
@@ -26,9 +27,9 @@ internal data class ExchangeUiState(
         data object ErrorFeeTooHigh : ExchangeStatus
         data object ErrorNotEnoughBalance : ExchangeStatus
         data class Success(
-            val traded: Pair<Currency, Double>,
-            val bought: Pair<Currency, Double>,
-            val fee: Pair<Currency, Double>?,
+            val traded: Pair<Currency, BigDecimal>,
+            val bought: Pair<Currency, BigDecimal>,
+            val fee: Pair<Currency, BigDecimal>?,
         ) : ExchangeStatus
     }
 }

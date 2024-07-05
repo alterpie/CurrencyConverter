@@ -4,6 +4,8 @@ import com.example.currencyconverter.core.exchange.converter.error.ExchangeError
 import com.example.currencyconverter.core.exchange.converter.model.ExchangeResult
 import com.example.currencyconverter.core.exchange.converter.model.ExchangeTransaction
 import com.example.currencyconverter.core.exchange.fees.FeeResolver
+import java.math.BigDecimal
+import java.math.RoundingMode
 import javax.inject.Inject
 
 internal class ExchangeEngineImpl @Inject constructor(
@@ -11,7 +13,11 @@ internal class ExchangeEngineImpl @Inject constructor(
 ) : ExchangeEngine {
 
     override suspend fun convert(exchangeTransaction: ExchangeTransaction): Result<ExchangeResult> {
-        if (exchangeTransaction.amount > exchangeTransaction.baseBalance) {
+        if (exchangeTransaction.amount > exchangeTransaction.baseBalance.setScale(
+                2,
+                RoundingMode.HALF_DOWN
+            )
+        ) {
             return Result.failure(ExchangeError.NotEnoughBalance())
         }
         val feeAmount = feeResolver.resolve(exchangeTransaction)
@@ -29,7 +35,7 @@ internal class ExchangeEngineImpl @Inject constructor(
         }
     }
 
-    private fun convert(amount: Double, rate: Double): Double {
-        return amount * rate
+    private fun convert(amount: BigDecimal, rate: BigDecimal): BigDecimal {
+        return amount.multiply(rate)
     }
 }

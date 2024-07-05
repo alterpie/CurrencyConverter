@@ -3,6 +3,7 @@ package com.example.currencyconverter.features.exchange.presentation.usecase
 import com.example.currencyconverter.core.balance.repository.BalanceRepository
 import com.example.currencyconverter.core.exchange.attempts.ExchangeAttemptsRepository
 import com.example.currencyconverter.core.exchange.rates.model.Currency
+import java.math.BigDecimal
 import javax.inject.Inject
 
 internal class ClearDataUseCase @Inject constructor(
@@ -12,6 +13,6 @@ internal class ClearDataUseCase @Inject constructor(
     suspend fun execute() {
         exchangeAttemptsRepository.clear()
         balanceRepository.clearAll()
-        balanceRepository.addToBalance(Currency("EUR"), 1000.0)
+        balanceRepository.addToBalance(Currency("EUR"), BigDecimal(1000.0))
     }
 }

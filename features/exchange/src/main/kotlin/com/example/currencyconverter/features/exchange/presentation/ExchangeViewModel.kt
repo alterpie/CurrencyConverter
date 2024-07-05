@@ -31,6 +31,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.math.BigDecimal
+import java.math.RoundingMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -105,7 +107,12 @@ internal class ExchangeViewModel @Inject constructor(
                 rates
             } else {
                 val rateToBase = requireNotNull(rates[selectedBalance.currency])
-                mapOf(state.baseCurrency to ExchangeRate(state.baseCurrency, 1 / rateToBase.value))
+                mapOf(
+                    state.baseCurrency to ExchangeRate(
+                        state.baseCurrency,
+                        BigDecimal.ONE.divide(rateToBase.value, 6, RoundingMode.HALF_DOWN)
+                    )
+                )
             }
             val selectedRate = if (updatedRates[state.baseCurrency] == null) {
                 val currentlySelected = state.selectedRate
@@ -133,13 +140,13 @@ internal class ExchangeViewModel @Inject constructor(
 
     private fun updateExchangedAmount() {
         combine(
-            amountInput.map { it.toDoubleOrNull() },
+            amountInput.map { it.toBigDecimalOrNull() },
             _state
                 .map { it.selectedRate }
                 .filterNotNull()
         ) { amount, rate ->
-
-            _state.update { it.copy(exchangeAmount = amount?.let { it * rate.value }) }
+            val exchangeAmount = amount?.let { it * rate.value }
+            _state.update { it.copy(exchangeAmount = exchangeAmount) }
         }
             .launchIn(viewModelScope)
     }
@@ -153,7 +160,7 @@ internal class ExchangeViewModel @Inject constructor(
         val targetRate = _state.value.selectedRate ?: return
         viewModelScope.launch {
             _state.update { it.copy(exchangeStatus = ExchangeStatus.Loading) }
-            val amount = amountInput.toDouble()
+            val amount = amountInput.toBigDecimal()
             // in production io dispatcher should be injected in ViewModel constructor,
             // use directly here for simplicity
             withContext(Dispatchers.IO) {

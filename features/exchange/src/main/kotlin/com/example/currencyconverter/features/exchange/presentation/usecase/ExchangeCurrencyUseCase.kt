@@ -9,6 +9,7 @@ import com.example.currencyconverter.core.exchange.rates.model.ExchangeRate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
+import java.math.BigDecimal
 import javax.inject.Inject
 
 internal class ExchangeCurrencyUseCase @Inject constructor(
@@ -19,7 +20,7 @@ internal class ExchangeCurrencyUseCase @Inject constructor(
     suspend fun execute(
         base: Currency,
         rate: ExchangeRate,
-        amount: Double
+        amount: BigDecimal
     ): Result<ExchangeResult> {
         return balanceRepository.getBalances()
             .take(1)

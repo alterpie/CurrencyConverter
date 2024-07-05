@@ -10,6 +10,7 @@ import io.mockk.confirmVerified
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import java.math.BigDecimal
 
 internal class BalanceLocalDataSourceImplTest {
 
@@ -20,10 +21,16 @@ internal class BalanceLocalDataSourceImplTest {
         val storedBalance = TestData.currencyBalanceEntity.copy(currency = CURRENCY_EUR)
         coEvery { currencyBalanceDao.getBalance(any()) } returns storedBalance
 
-        createDataSource().addToBalance(CURRENCY_EUR, 12.0)
+        createDataSource().addToBalance(CURRENCY_EUR, BigDecimal.valueOf(12.0))
 
         coVerify {
-            currencyBalanceDao.updateBalance(storedBalance.copy(amount = storedBalance.amount + 12.0))
+            currencyBalanceDao.updateBalance(
+                storedBalance.copy(
+                    amount = storedBalance.amount + BigDecimal.valueOf(
+                        12.0
+                    )
+                )
+            )
         }
     }
 
@@ -31,10 +38,15 @@ internal class BalanceLocalDataSourceImplTest {
     fun `adds new balance`() = runTest {
         coEvery { currencyBalanceDao.getBalance(any()) } returns null
 
-        createDataSource().addToBalance(CURRENCY_EUR, 12.0)
+        createDataSource().addToBalance(CURRENCY_EUR, BigDecimal.valueOf(12.0))
 
         coVerify {
-            currencyBalanceDao.updateBalance(CurrencyBalanceEntity(CURRENCY_EUR, 12.0))
+            currencyBalanceDao.updateBalance(
+                CurrencyBalanceEntity(
+                    CURRENCY_EUR,
+                    BigDecimal.valueOf(12.0)
+                )
+            )
         }
     }
 
@@ -43,10 +55,16 @@ internal class BalanceLocalDataSourceImplTest {
         val storedBalance = TestData.currencyBalanceEntity
         coEvery { currencyBalanceDao.getBalance(any()) } returns storedBalance
 
-        createDataSource().deductFromBalance(CURRENCY_EUR, 4.0)
+        createDataSource().deductFromBalance(CURRENCY_EUR, BigDecimal.valueOf(4.0))
 
         coVerify {
-            currencyBalanceDao.updateBalance(storedBalance.copy(amount = storedBalance.amount - 4.0))
+            currencyBalanceDao.updateBalance(
+                storedBalance.copy(
+                    amount = storedBalance.amount - BigDecimal.valueOf(
+                        4.0
+                    )
+                )
+            )
         }
     }
 
@@ -54,7 +72,7 @@ internal class BalanceLocalDataSourceImplTest {
     fun `no deduction when balance does not exist`() = runTest {
         coEvery { currencyBalanceDao.getBalance(any()) } returns null
 
-        createDataSource().deductFromBalance(CURRENCY_EUR, 4.0)
+        createDataSource().deductFromBalance(CURRENCY_EUR, BigDecimal.valueOf(4.0))
 
         coVerify {
             currencyBalanceDao.getBalance(CURRENCY_EUR)

@@ -13,6 +13,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import java.math.BigDecimal
 
 internal class ExchangeCurrencyUseCaseTest {
 
@@ -23,22 +24,26 @@ internal class ExchangeCurrencyUseCaseTest {
     fun `converts provided currencies`() = runTest {
         every { balanceRepository.getBalances() } returns flowOf(
             listOf(
-                TestData.balance.copy(currency = CURRENCY_EUR, amount = 42.0),
-                TestData.balance.copy(currency = CURRENCY_USD, amount = 3.0),
-                TestData.balance.copy(currency = CURRENCY_BTC, amount = 0.04),
+                TestData.balance.copy(currency = CURRENCY_EUR, amount = BigDecimal.valueOf(42.0)),
+                TestData.balance.copy(currency = CURRENCY_USD, amount = BigDecimal.valueOf(3.0)),
+                TestData.balance.copy(currency = CURRENCY_BTC, amount = BigDecimal.valueOf(0.04)),
             )
         )
 
         coEvery { exchangeEngine.convert(any()) } returns Result.success(
             ExchangeResult(
-                tradedAmount = 1.0,
-                convertedAmount = 3.0,
-                fee = 0.0,
+                tradedAmount = BigDecimal.valueOf(1.0),
+                convertedAmount = BigDecimal.valueOf(3.0),
+                fee = BigDecimal.valueOf(0.0),
             )
         )
 
         val result =
-            createUseCase().execute(base = CURRENCY_EUR, rate = EXCHANGE_RATE_BTC, amount = 3.0)
+            createUseCase().execute(
+                base = CURRENCY_EUR,
+                rate = EXCHANGE_RATE_BTC,
+                amount = BigDecimal.valueOf(3.0)
+            )
 
         assert(result.isSuccess)
 
@@ -46,9 +51,12 @@ internal class ExchangeCurrencyUseCaseTest {
             exchangeEngine.convert(
                 ExchangeTransaction(
                     base = CURRENCY_EUR,
-                    baseBalance = 42.0,
-                    amount = 3.0,
-                    rate = TestData.exchangeRate.copy(currency = CURRENCY_BTC, value = 0.000504),
+                    baseBalance = BigDecimal.valueOf(42.0),
+                    amount = BigDecimal.valueOf(3.0),
+                    rate = TestData.exchangeRate.copy(
+                        currency = CURRENCY_BTC,
+                        value = BigDecimal.valueOf(0.000504)
+                    ),
                 )
             )
         }
@@ -58,24 +66,28 @@ internal class ExchangeCurrencyUseCaseTest {
     fun `updates balances after successful conversion`() = runTest {
         every { balanceRepository.getBalances() } returns flowOf(
             listOf(
-                TestData.balance.copy(currency = CURRENCY_EUR, amount = 42.0),
-                TestData.balance.copy(currency = CURRENCY_USD, amount = 3.0),
-                TestData.balance.copy(currency = CURRENCY_BTC, amount = 0.04),
+                TestData.balance.copy(currency = CURRENCY_EUR, amount = BigDecimal.valueOf(42.0)),
+                TestData.balance.copy(currency = CURRENCY_USD, amount = BigDecimal.valueOf(3.0)),
+                TestData.balance.copy(currency = CURRENCY_BTC, amount = BigDecimal.valueOf(0.04)),
             )
         )
 
         val result = ExchangeResult(
-            tradedAmount = 1.0,
-            convertedAmount = 3.0,
-            fee = 0.0,
+            tradedAmount = BigDecimal.valueOf(1.0),
+            convertedAmount = BigDecimal.valueOf(3.0),
+            fee = BigDecimal.valueOf(0.0),
         )
         coEvery { exchangeEngine.convert(any()) } returns Result.success(result)
 
-        createUseCase().execute(base = CURRENCY_EUR, rate = EXCHANGE_RATE_BTC, amount = 3.0)
+        createUseCase().execute(
+            base = CURRENCY_EUR,
+            rate = EXCHANGE_RATE_BTC,
+            amount = BigDecimal.valueOf(3.0)
+        )
 
         coVerify {
-            balanceRepository.addToBalance(CURRENCY_BTC, 3.0)
-            balanceRepository.deductFromBalance(CURRENCY_EUR, 1.0)
+            balanceRepository.addToBalance(CURRENCY_BTC, BigDecimal.valueOf(3.0))
+            balanceRepository.deductFromBalance(CURRENCY_EUR, BigDecimal.valueOf(1.0))
         }
     }
 
@@ -92,6 +104,9 @@ internal class ExchangeCurrencyUseCaseTest {
         val CURRENCY_BTC = Currency("BTC")
 
         val EXCHANGE_RATE_BTC =
-            TestData.exchangeRate.copy(currency = CURRENCY_BTC, value = 0.000504)
+            TestData.exchangeRate.copy(
+                currency = CURRENCY_BTC,
+                value = BigDecimal.valueOf(0.000504)
+            )
     }
 }

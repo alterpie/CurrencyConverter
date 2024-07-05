@@ -59,6 +59,7 @@ import com.example.currencyconverter.core.design_system.theme.textSecondary
 import com.example.currencyconverter.features.exchange.R
 import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState
 import kotlinx.collections.immutable.ImmutableList
+import java.math.BigDecimal
 
 @Composable
 internal fun ExchangeScreen(
@@ -103,7 +104,7 @@ internal fun ExchangeScreen(
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             shape = RoundedCornerShape(50),
             enabled = state.selectedBalance != null && state.selectedRate != null
-                    && state.exchangeAmount != null && state.exchangeAmount > 0
+                    && state.exchangeAmount != null && state.exchangeAmount > BigDecimal.ZERO
                     && state.selectedBalance.currency != state.selectedRate.currency
         ) {
             Text(text = stringResource(R.string.submit))

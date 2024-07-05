@@ -7,6 +7,8 @@ import com.example.currencyconverter.core.balance.model.CurrencyBalance
 import com.example.currencyconverter.core.exchange.rates.model.Currency
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.math.BigDecimal
+import java.math.RoundingMode
 import javax.inject.Inject
 
 internal class BalanceLocalDataSourceImpl @Inject constructor(
@@ -18,15 +20,15 @@ internal class BalanceLocalDataSourceImpl @Inject constructor(
             .map { balances -> balances.map { it.map() } }
     }
 
-    override suspend fun addToBalance(currency: Currency, amount: Double) {
+    override suspend fun addToBalance(currency: Currency, amount: BigDecimal) {
         val storedBalance = currencyBalanceDao.getBalance(currency)
         val updatedBalance = storedBalance?.let {
             it.copy(amount = it.amount + amount)
-        } ?: CurrencyBalanceEntity(currency, amount)
+        } ?: CurrencyBalanceEntity(currency, amount.setScale(6, RoundingMode.HALF_DOWN))
         currencyBalanceDao.updateBalance(updatedBalance)
     }
 
-    override suspend fun deductFromBalance(currency: Currency, amount: Double) {
+    override suspend fun deductFromBalance(currency: Currency, amount: BigDecimal) {
         currencyBalanceDao.getBalance(currency)?.let {
             currencyBalanceDao.updateBalance(it.copy(amount = it.amount - amount))
         }

@@ -7,6 +7,7 @@ import com.example.currencyconverter.core.exchange.fees.FeeWeight
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
+import java.math.BigDecimal
 import javax.inject.Inject
 
 internal class FirstFiveTransactionsFreeFeeApplier @Inject constructor(
@@ -19,7 +20,7 @@ internal class FirstFiveTransactionsFreeFeeApplier @Inject constructor(
             .map { count ->
                 if (count < 5) {
                     exchangeAttemptsRepository.incrementExchangeAttemptsCount()
-                    FeeWeight.SubstituteAll(0.0)
+                    FeeWeight.SubstituteAll(BigDecimal.ZERO)
                 } else {
                     FeeWeight.NotValid
                 }

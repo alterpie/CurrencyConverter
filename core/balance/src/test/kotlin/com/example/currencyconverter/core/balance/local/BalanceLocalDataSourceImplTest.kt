@@ -11,6 +11,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 internal class BalanceLocalDataSourceImplTest {
 
@@ -44,7 +45,7 @@ internal class BalanceLocalDataSourceImplTest {
             currencyBalanceDao.updateBalance(
                 CurrencyBalanceEntity(
                     CURRENCY_EUR,
-                    BigDecimal.valueOf(12.0)
+                    BigDecimal.valueOf(12.00).setScale(6, RoundingMode.HALF_DOWN)
                 )
             )
         }

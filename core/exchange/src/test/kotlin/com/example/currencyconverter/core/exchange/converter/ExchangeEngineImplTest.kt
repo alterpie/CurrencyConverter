@@ -10,6 +10,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import java.math.BigDecimal
 
 internal class ExchangeEngineImplTest {
 
@@ -19,10 +20,10 @@ internal class ExchangeEngineImplTest {
     fun `returns error when not enough balance for exchange`() = runTest {
         val result = createEngine().convert(
             ExchangeTransaction(
-                baseBalance = 42.0,
-                amount = 50.0,
+                baseBalance = BigDecimal.valueOf(42.0),
+                amount = BigDecimal.valueOf(50.0),
                 base = BASE,
-                rate = ExchangeRate(TARGET, 1.21)
+                rate = ExchangeRate(TARGET, BigDecimal.valueOf(1.21))
             )
         )
 
@@ -32,13 +33,13 @@ internal class ExchangeEngineImplTest {
 
     @Test
     fun `returns error when conversion fee exceeds balance`() = runTest {
-        coEvery { feeResolver.resolve(any()) } returns 100.0
+        coEvery { feeResolver.resolve(any()) } returns BigDecimal.valueOf(100.0)
         val result = createEngine().convert(
             ExchangeTransaction(
-                baseBalance = 42.0,
-                amount = 5.0,
+                baseBalance = BigDecimal.valueOf(42.0),
+                amount = BigDecimal.valueOf(5.0),
                 base = BASE,
-                rate = ExchangeRate(TARGET, 1.21)
+                rate = ExchangeRate(TARGET, BigDecimal.valueOf(1.21))
             )
         )
 
@@ -48,21 +49,21 @@ internal class ExchangeEngineImplTest {
 
     @Test
     fun `converts provided amount`() = runTest {
-        coEvery { feeResolver.resolve(any()) } returns 3.0
+        coEvery { feeResolver.resolve(any()) } returns BigDecimal.valueOf(3.0)
         val result = createEngine().convert(
             ExchangeTransaction(
-                baseBalance = 42.0,
-                amount = 5.0,
+                baseBalance = BigDecimal.valueOf(42.0),
+                amount = BigDecimal.valueOf(5.0),
                 base = BASE,
-                rate = ExchangeRate(TARGET, 1.21)
+                rate = ExchangeRate(TARGET, BigDecimal.valueOf(1.21))
             )
         )
 
         assert(result.isSuccess)
         val expected = ExchangeResult(
-            tradedAmount = 5.0,
-            convertedAmount = 5.0 * 1.21,
-            fee = 3.0
+            tradedAmount = BigDecimal.valueOf(5.0),
+            convertedAmount = BigDecimal.valueOf(5.0) * BigDecimal.valueOf(1.21),
+            fee = BigDecimal.valueOf(3.0)
         )
         assert(result.getOrNull() == expected)
     }

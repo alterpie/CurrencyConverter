@@ -13,6 +13,7 @@ Tech stack used:
 9. Kotlin coroutines for multithreading
 
 Application is modularized by features with shared functionality declared as "core" modules such as access to user's balance or design system tokens to use for UI and could be represented as following:
+```
                              App
                               |
                               |
@@ -26,6 +27,7 @@ core:design-system       core:balance          core:exchange
                               |
                               |
                        feature:exchange
+```
 
 Some of the core functionality classes are covered with unit tests such as ExchangeEngine, FeeResolver and BalanceLocalDataSource which could be found in core:exchange and core:balance modules.
 

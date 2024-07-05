@@ -7,6 +7,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 internal data class ExchangeUiState(
+    val baseCurrency: Currency = Currency("EUR"),
     val balances: ImmutableList<CurrencyBalance> = persistentListOf(),
     val rates: ImmutableList<ExchangeRate> = persistentListOf(),
     val ratesStatus: RatesStatus = RatesStatus.CONTENT,

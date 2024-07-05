@@ -5,7 +5,6 @@ import com.example.currencyconverter.core.exchange.converter.ExchangeEngine
 import com.example.currencyconverter.core.exchange.converter.model.ExchangeResult
 import com.example.currencyconverter.core.exchange.converter.model.ExchangeTransaction
 import com.example.currencyconverter.core.exchange.rates.model.Currency
-import com.example.currencyconverter.core.exchange.rates.repository.ExchangeRatesRepository
 import com.example.currencyconverter.features.exchange.TestData
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -18,7 +17,6 @@ import org.junit.Test
 internal class ExchangeCurrencyUseCaseTest {
 
     private val balanceRepository = mockk<BalanceRepository>()
-    private val exchangeRatesRepository = mockk<ExchangeRatesRepository>()
     private val exchangeEngine = mockk<ExchangeEngine>()
 
     @Test
@@ -31,13 +29,6 @@ internal class ExchangeCurrencyUseCaseTest {
             )
         )
 
-        every { exchangeRatesRepository.getRates() } returns flowOf(
-            listOf(
-                TestData.exchangeRate.copy(currency = CURRENCY_USD, value = 1.21),
-                TestData.exchangeRate.copy(currency = CURRENCY_BTC, value = 0.000504),
-            )
-        )
-
         coEvery { exchangeEngine.convert(any()) } returns Result.success(
             ExchangeResult(
                 tradedAmount = 1.0,
@@ -47,7 +38,7 @@ internal class ExchangeCurrencyUseCaseTest {
         )
 
         val result =
-            createUseCase().execute(base = CURRENCY_EUR, target = CURRENCY_BTC, amount = 3.0)
+            createUseCase().execute(base = CURRENCY_EUR, rate = EXCHANGE_RATE_BTC, amount = 3.0)
 
         assert(result.isSuccess)
 
@@ -73,13 +64,6 @@ internal class ExchangeCurrencyUseCaseTest {
             )
         )
 
-        every { exchangeRatesRepository.getRates() } returns flowOf(
-            listOf(
-                TestData.exchangeRate.copy(currency = CURRENCY_USD, value = 1.21),
-                TestData.exchangeRate.copy(currency = CURRENCY_BTC, value = 0.000504),
-            )
-        )
-
         val result = ExchangeResult(
             tradedAmount = 1.0,
             convertedAmount = 3.0,
@@ -87,7 +71,7 @@ internal class ExchangeCurrencyUseCaseTest {
         )
         coEvery { exchangeEngine.convert(any()) } returns Result.success(result)
 
-        createUseCase().execute(base = CURRENCY_EUR, target = CURRENCY_BTC, amount = 3.0)
+        createUseCase().execute(base = CURRENCY_EUR, rate = EXCHANGE_RATE_BTC, amount = 3.0)
 
         coVerify {
             balanceRepository.addToBalance(CURRENCY_BTC, 3.0)
@@ -98,7 +82,6 @@ internal class ExchangeCurrencyUseCaseTest {
     private fun createUseCase(): ExchangeCurrencyUseCase {
         return ExchangeCurrencyUseCase(
             balanceRepository = balanceRepository,
-            exchangeRatesRepository = exchangeRatesRepository,
             exchangeEngine = exchangeEngine,
         )
     }
@@ -107,5 +90,8 @@ internal class ExchangeCurrencyUseCaseTest {
         val CURRENCY_EUR = Currency("EUR")
         val CURRENCY_USD = Currency("USD")
         val CURRENCY_BTC = Currency("BTC")
+
+        val EXCHANGE_RATE_BTC =
+            TestData.exchangeRate.copy(currency = CURRENCY_BTC, value = 0.000504)
     }
 }

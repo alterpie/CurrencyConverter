@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.currencyconverter.core.balance.model.CurrencyBalance
 import com.example.currencyconverter.core.balance.repository.BalanceRepository
 import com.example.currencyconverter.core.exchange.converter.error.ExchangeError
+import com.example.currencyconverter.core.exchange.rates.model.Currency
 import com.example.currencyconverter.core.exchange.rates.model.ExchangeRate
 import com.example.currencyconverter.core.exchange.rates.repository.ExchangeRatesRepository
 import com.example.currencyconverter.features.exchange.presentation.ExchangeUiState.ExchangeStatus
@@ -21,6 +22,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -44,22 +46,22 @@ internal class ExchangeViewModel @Inject constructor(
 
     private var refreshJob: Job = Job()
     private val amountInput = MutableStateFlow("")
+    private val allRates = MutableStateFlow<Map<Currency, ExchangeRate>>(emptyMap())
 
     init {
-        getRates()
+        getAllRates()
         getBalances()
         updateExchangedAmount()
+        updateApplicableRates()
     }
 
-    private fun getRates() {
+    private fun getAllRates() {
         exchangeRatesRepository.getRates()
             .onEach { rates ->
-                val selectedRate = _state.value.selectedRate ?: rates.firstOrNull()
+                allRates.update { rates.associate { it.currency to it } }
                 _state.update {
                     it.copy(
-                        rates = rates.toImmutableList(),
                         ratesStatus = RatesStatus.CONTENT,
-                        selectedRate = selectedRate,
                     )
                 }
             }
@@ -92,6 +94,43 @@ internal class ExchangeViewModel @Inject constructor(
         this.amountInput.value = amountInput
     }
 
+    private fun updateApplicableRates() {
+        combine(
+            allRates.filter { it.isNotEmpty() },
+            state.filter { it.selectedBalance != null },
+        ) { rates, state ->
+            val selectedBalance = requireNotNull(state.selectedBalance)
+
+            val updatedRates = if (selectedBalance.currency == state.baseCurrency) {
+                rates
+            } else {
+                val rateToBase = requireNotNull(rates[selectedBalance.currency])
+                mapOf(state.baseCurrency to ExchangeRate(state.baseCurrency, 1 / rateToBase.value))
+            }
+            val selectedRate = if (updatedRates[state.baseCurrency] == null) {
+                val currentlySelected = state.selectedRate
+                if (currentlySelected == null || currentlySelected.currency == state.baseCurrency) {
+                    updatedRates.entries.first().value
+                } else {
+                    currentlySelected
+                }
+            } else {
+                updatedRates[state.selectedRate?.currency] ?: updatedRates.entries.first().value
+            }
+
+            updatedRates.values to selectedRate
+        }
+            .onEach { (updatedRates, selectedRate) ->
+                _state.update {
+                    it.copy(
+                        rates = updatedRates.toImmutableList(),
+                        selectedRate = selectedRate,
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
     private fun updateExchangedAmount() {
         combine(
             amountInput.map { it.toDoubleOrNull() },
@@ -111,15 +150,16 @@ internal class ExchangeViewModel @Inject constructor(
 
     fun exchangeCurrency(amountInput: String) {
         val base = _state.value.selectedBalance?.currency ?: return
-        val targetCurrency = _state.value.selectedRate?.currency ?: return
+        val targetRate = _state.value.selectedRate ?: return
         viewModelScope.launch {
             _state.update { it.copy(exchangeStatus = ExchangeStatus.Loading) }
             val amount = amountInput.toDouble()
-            // in production app dispatcher is injected in ViewModel constructor, use directly here for simplicity
+            // in production io dispatcher should be injected in ViewModel constructor,
+            // use directly here for simplicity
             withContext(Dispatchers.IO) {
                 exchangeCurrencyUseCase.execute(
                     base = base,
-                    target = targetCurrency,
+                    rate = targetRate,
                     amount = amount,
                 )
             }
@@ -129,7 +169,7 @@ internal class ExchangeViewModel @Inject constructor(
                             it.copy(
                                 exchangeStatus = ExchangeStatus.Success(
                                     traded = base to result.tradedAmount,
-                                    bought = targetCurrency to result.convertedAmount,
+                                    bought = targetRate.currency to result.convertedAmount,
                                     fee = base to result.fee,
                                 )
                             )

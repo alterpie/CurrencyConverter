@@ -104,6 +104,7 @@ internal fun ExchangeScreen(
             shape = RoundedCornerShape(50),
             enabled = state.selectedBalance != null && state.selectedRate != null
                     && state.exchangeAmount != null && state.exchangeAmount > 0
+                    && state.selectedBalance.currency != state.selectedRate.currency
         ) {
             Text(text = stringResource(R.string.submit))
         }
